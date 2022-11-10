@@ -288,3 +288,4 @@ Libs/Irrlicht.dll
 WolvenKit.IrrlichtLime/Release-x86
 msbuild.binlog
 !texconv.pdb
+Wolvenkit.Installer/Wolvenkit.Installer (Package)/SigningCertificate_Encoded.txt
