@@ -72,12 +72,10 @@ public partial class App : Application
     {
         ThemeHelper.Initialize();
 
-
-        var targetPageType = typeof(InstalledPage);
-        var targetPageArguments = string.Empty;
         MainRoot = StartupWindow.Content as FrameworkElement;
+
         var rootPage = StartupWindow as MainWindow;
-        rootPage.Navigate(targetPageType, targetPageArguments);
+        rootPage.Navigate(typeof(InstalledPage), "");
 
         // Ensure the current window is active
         StartupWindow.Activate();

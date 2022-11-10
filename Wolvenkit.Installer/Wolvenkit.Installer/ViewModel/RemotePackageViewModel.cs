@@ -6,6 +6,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.Extensions.DependencyInjection;
 using Wolvenkit.Installer.Models;
+using Wolvenkit.Installer.Pages;
 using Wolvenkit.Installer.Services;
 
 namespace Wolvenkit.Installer.ViewModel;
@@ -51,13 +52,13 @@ public partial class RemotePackageViewModel
     [RelayCommand(CanExecute = nameof(CanInstall))]
     private async Task Install()
     {
-        _notificationService.StartIndeterminate();
-        _notificationService.DisplayBanner("Installing", $"Installing {Name}. Please wait", Microsoft.UI.Xaml.Controls.InfoBarSeverity.Informational);
-
         await _libraryService.InstallAsync(_model, InstallPath);
 
         _notificationService.CloseBanner();
         _notificationService.StopIndeterminate();
+
+        //var rootPage = App.StartupWindow as MainWindow;
+        //rootPage.Navigate(typeof(InstalledPage), "");
     }
 
     [RelayCommand()]
@@ -84,10 +85,7 @@ public partial class RemotePackageViewModel
         }
     }
 
-    private bool CanInstall()
-    {
-        return !Directory.Exists(InstallPath) || (Directory.Exists(InstallPath) && !Directory.GetFiles(InstallPath).Any());
-    }
+    private bool CanInstall() => !Directory.Exists(InstallPath) || (Directory.Exists(InstallPath) && !Directory.GetFiles(InstallPath).Any());
 
     public RemotePackageModel GetModel() => _model;
 }

@@ -9,7 +9,7 @@
   <Identity
     Name="26499Wolvenkit.WolvenKit.Installer"
     Publisher="CN=wolvenkit"
-    Version="1.0.3.0" />
+    Version="1.0.0.0" />
 
   <Properties>
     <DisplayName>WolvenKit.Installer</DisplayName>

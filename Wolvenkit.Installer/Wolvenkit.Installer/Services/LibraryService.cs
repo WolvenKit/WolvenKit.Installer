@@ -11,6 +11,7 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 using Microsoft.Extensions.Logging;
 using Semver;
 using Wolvenkit.Installer.Models;
@@ -299,6 +300,7 @@ public class LibraryService : ILibraryService
         }
 
         _notificationService.StartIndeterminate();
+        _notificationService.DisplayBanner("Installing", $"Downloading {package.Name}. Please wait ...", Microsoft.UI.Xaml.Controls.InfoBarSeverity.Informational);
 
         // get remote version
         var version = await GetLatestVersionAsync(package);
@@ -382,6 +384,7 @@ public class LibraryService : ILibraryService
 
 
         // extract zip file
+        _notificationService.DisplayBanner("Installing", $"Installing {package.Name}. Please wait ...", Microsoft.UI.Xaml.Controls.InfoBarSeverity.Informational);
         var installedFiles = await Task.Run(() => ExtractZip(zipPath, installPath));
 
         var installedPackage = new PackageModel(
