@@ -8,8 +8,8 @@
 
   <Identity
     Name="26499Wolvenkit.WolvenKit.Installer"
-    Publisher="CN=AF3D6159-5B23-4518-A2E2-FFE986563DE4"
-    Version="1.0.0.0" />
+    Publisher="CN=wolvenkit"
+    Version="1.0.3.0" />
 
   <Properties>
     <DisplayName>WolvenKit.Installer</DisplayName>
