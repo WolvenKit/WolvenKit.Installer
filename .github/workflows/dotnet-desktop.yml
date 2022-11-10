@@ -56,7 +56,7 @@ jobs:
     env:
       Solution_Name: Wolvenkit.Installer.sln                                                # Replace with your solution name, i.e. MyWpfApp.sln.
       Wap_Project_Directory: Wolvenkit.Installer.Package                                    # Replace with the Wap project directory relative to the solution, i.e. MyWpfApp.Package.
-      Wap_Project_Path: Wolvenkit.Installer.Package/Wolvenkit.Installer.Package.wapproj"    # Replace with the path to your Wap project, i.e. MyWpf.App.Package\MyWpfApp.Package.wapproj.
+      Wap_Project_Path: Wolvenkit.Installer.Package/Wolvenkit.Installer.Package.wapproj     # Replace with the path to your Wap project, i.e. MyWpf.App.Package\MyWpfApp.Package.wapproj.
 
     steps:
     - name: Checkout
