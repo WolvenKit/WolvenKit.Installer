@@ -98,7 +98,7 @@
     <Content Include="Images\Wide310x150Logo.scale-150.png" />
     <Content Include="Images\Wide310x150Logo.scale-200.png" />
     <Content Include="Images\Wide310x150Logo.scale-400.png" />
-    <None Include="Wolvenkit.Installer %28Package%29_TemporaryKey.pfx" />
+    <None Include="Wolvenkit.Installer.Package_TemporaryKey.pfx" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Wolvenkit.Installer\Wolvenkit.Installer.csproj">
