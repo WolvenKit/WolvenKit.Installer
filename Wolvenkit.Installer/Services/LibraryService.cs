@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
@@ -11,10 +12,10 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using System.Xml.Linq;
 using Microsoft.Extensions.Logging;
 using Semver;
 using Wolvenkit.Installer.Models;
+using Wolvenkit.Installer.Pages;
 using Wolvenkit.Installer.ViewModel;
 
 namespace Wolvenkit.Installer.Services;
@@ -165,57 +166,11 @@ public class LibraryService : ILibraryService
                     InstalledPackages = new();
                 }
 
-                // check if new app needs registering
-                if (App.TargetAppSettings != null)
-                {
-                    var found = false;
-                    foreach (var item in InstalledPackages)
-                    {
-                        if (item.Name == App.TargetAppSettings.TargetId)
-                        {
-                            var targetPath = App.TargetAppSettings.TargetLocation.FullName.ToUpper();
-                            var installedPath = item.Location.ToUpper();
-                            if (string.Equals(targetPath, installedPath, StringComparison.CurrentCultureIgnoreCase))
-                            {
-                                found = true;
-                                break;
-                            }
-                        }
-                    }
 
-                    if (found)
-                    {
-                        // do nothing, already installed
-                    }
-                    else
-                    {
-
-                        // register
-                        var installedPackage = new PackageModel(
-                            App.TargetAppSettings.TargetId,
-                            App.TargetAppSettings.TargetVersion,
-                            null,
-                            App.TargetAppSettings.TargetLocation.FullName);
-
-                        // check for updates
-                        if (TryGetRemote(installedPackage.Name, out var remote))
-                        {
-                            var installedVersion = SemVersion.Parse(installedPackage.Version, SemVersionStyles.OptionalMinorPatch);
-                            var remoteVersion = SemVersion.Parse(remote.Version, SemVersionStyles.OptionalMinorPatch);
-                            var updateAvailable = remoteVersion.CompareSortOrderTo(installedVersion) > 0;
-
-                            InstalledPackages.Add(new PackageViewModel(
-                            installedPackage,
-                            updateAvailable ? EPackageStatus.UpdateAvailable : EPackageStatus.Installed,
-                            "ms-appx:///Assets/ControlImages/Acrylic.png"
-                            ));
-                        }
-                    }
-                }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                // TODO logging
+                _logger.LogError(ex, "Could not deserialize library");
                 throw;
             }
         }
@@ -224,7 +179,57 @@ public class LibraryService : ILibraryService
             InstalledPackages = new();
         }
 
+        // check if new app needs registering
+        if (App.TargetAppSettings != null)
+        {
+            var found = false;
+            foreach (var item in InstalledPackages)
+            {
+                if (item.Name == App.TargetAppSettings.TargetId)
+                {
+                    var targetPath = App.TargetAppSettings.TargetLocation.FullName.ToUpper();
+                    var installedPath = item.Location.ToUpper();
+                    if (string.Equals(targetPath, installedPath, StringComparison.CurrentCultureIgnoreCase))
+                    {
+                        found = true;
+                        break;
+                    }
+                }
+            }
+
+            if (found)
+            {
+                // do nothing, already installed
+            }
+            else
+            {
+
+                // register
+                var installedPackage = new PackageModel(
+                    App.TargetAppSettings.TargetId,
+                    App.TargetAppSettings.TargetVersion,
+                    null,
+                    App.TargetAppSettings.TargetLocation.FullName);
+
+                // check for updates
+                if (TryGetRemote(installedPackage.Name, out var remote))
+                {
+                    var installedVersion = SemVersion.Parse(installedPackage.Version, SemVersionStyles.OptionalMinorPatch);
+                    var remoteVersion = SemVersion.Parse(remote.Version, SemVersionStyles.OptionalMinorPatch);
+                    var updateAvailable = remoteVersion.CompareSortOrderTo(installedVersion) > 0;
+
+                    InstalledPackages.Add(new PackageViewModel(
+                    installedPackage,
+                    updateAvailable ? EPackageStatus.UpdateAvailable : EPackageStatus.Installed,
+                    "ms-appx:///Assets/ControlImages/Acrylic.png"
+                    ));
+                }
+            }
+        }
+
         await SaveAsync();
+
+        (App.StartupWindow as MainWindow).Navigate(typeof(InstalledPage), "");
     }
 
     #endregion
@@ -356,6 +361,7 @@ public class LibraryService : ILibraryService
             var contentUrl = asset.First().BrowserDownloadUrl;
             zipPath = Path.Combine(Path.GetTempPath(), contentUrl.Split('/').Last());
 
+            // TODO
             var remoteHash = "";
             string localHash = null;
             if (File.Exists(zipPath))
@@ -395,10 +401,59 @@ public class LibraryService : ILibraryService
 
         InstalledPackages.Add(new(installedPackage, EPackageStatus.Installed, package.ImagePath));
 
+        // add start menu shortcut
+        AddShortcut(installedPackage, package);
+
         // save
         await SaveAsync();
 
         return true;
+    }
+
+    private void AddShortcut(PackageModel installedPackage, RemotePackageModel remote)
+    {
+        var pathToExe = Path.Combine(installedPackage.Path, remote.Executable);
+        //var commonStartMenuPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonStartMenu), "Programs");
+        var commonStartMenuPath = "E:\\_out";
+        //var description = remote.Description;
+        //var iconPath = "";
+        var linkName = $"{installedPackage.Name}.lnk";
+        //var shortcutLocation = Path.Combine(commonStartMenuPath, linkName);
+
+        //var startInfo = new ProcessStartInfo()
+        //{
+        //    FileName = "powershell.exe",
+        //    Arguments = $"New-Item -ItemType SymbolicLink -Path \"{commonStartMenuPath}\" -Name \"{linkName}\" -Value \"{pathToExe}\"",
+        //    UseShellExecute = true,
+        //    Verb = "runas"
+        //};
+        //Process.Start(startInfo);
+
+        using var p = new Process();
+        //p.StartInfo.FileName = "CMD.EXE";
+        p.StartInfo.FileName = "powershell.exe";
+        //p.StartInfo.Arguments = $"/K powershell.exe New-Item -ItemType SymbolicLink -Path \"{commonStartMenuPath}\" -Name \"{linkName}\" -Value \"{pathToExe}\"";
+        p.StartInfo.Arguments = $"New-Item -ItemType SymbolicLink -Path \"{commonStartMenuPath}\" -Name \"{linkName}\" -Value \"{pathToExe}\"";
+        p.StartInfo.UseShellExecute = true;
+        p.StartInfo.Verb = "runas";
+        //p.StartInfo.RedirectStandardOutput = true;
+        p.Start();
+
+        //Console.WriteLine(p.StandardOutput.ReadToEnd());
+
+        //p.WaitForExit();
+
+        //try
+        //{
+
+        //    DK.WshRuntime.WshInterop.CreateShortcut(shortcutLocation, description, pathToExe, "", iconPath);
+        //}
+        //catch (Exception e)
+        //{
+        //    _logger.LogWarning("Exception: {msg}", e.Message);
+        //}
+
+
     }
 
     /// <summary>

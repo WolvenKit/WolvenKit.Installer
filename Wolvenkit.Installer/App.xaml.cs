@@ -5,6 +5,7 @@ using System;
 using System.IO;
 using System.Reflection;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using Microsoft.UI.Xaml;
 using Wolvenkit.Installer.Helper;
 using Wolvenkit.Installer.Pages;
@@ -74,8 +75,7 @@ public partial class App : Application
 
         MainRoot = StartupWindow.Content as FrameworkElement;
 
-        var rootPage = StartupWindow as MainWindow;
-        rootPage.Navigate(typeof(InstalledPage), "");
+        (StartupWindow as MainWindow).Navigate(typeof(InstalledPage), "");
 
         // Ensure the current window is active
         StartupWindow.Activate();
@@ -106,7 +106,13 @@ public partial class App : Application
     {
         ServiceCollection services = new();
 
-        services.AddLogging();
+        //services.AddLogging();
+        services.AddLogging(builder =>
+        {
+            builder.ClearProviders();
+            builder.AddDebug();
+        });
+
 
         services.AddSingleton<INotificationService, NotificationService>();
         services.AddTransient<IDialogService, DialogService>();
@@ -123,6 +129,7 @@ public partial class App : Application
 
         return services.BuildServiceProvider();
     }
+
 
     public static TEnum GetEnum<TEnum>(string text) where TEnum : struct
     {
