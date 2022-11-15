@@ -89,7 +89,20 @@
                     x:Name="smallHeaderSubtitleText"
                     Foreground="Black"
                     Style="{StaticResource SubtitleTextBlockStyle}"
-                    Text="{StaticResource WinUIVersion}" />
+                    Text="{x:Bind ViewModel.Version}" />
+                <HyperlinkButton
+                    Margin="-12,2,8,0"
+                    Foreground="Black"
+                    NavigateUri="https://github.com/WolvenKit/Wolvenkit"
+                    RelativePanel.Below="versionText">
+                    <HyperlinkButton.Content>
+                        <StackPanel Orientation="Horizontal">
+                            <SymbolIcon Symbol="Link" />
+                            <TextBlock Margin="5,0,0,0" Text="https://github.com/WolvenKit/Wolvenkit" />
+                        </StackPanel>
+
+                    </HyperlinkButton.Content>
+                </HyperlinkButton>
             </StackPanel>
         </Grid>
 

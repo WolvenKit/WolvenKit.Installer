@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using Windows.ApplicationModel;
 using Wolvenkit.Installer.Services;
 
 namespace Wolvenkit.Installer.ViewModel;
@@ -22,7 +23,7 @@ public partial class MainViewModel
         Notifications = notificationService;
 
         Init();
-
+        Version = GetAppVersion();
     }
 
     [ObservableProperty]
@@ -30,6 +31,19 @@ public partial class MainViewModel
 
     [ObservableProperty]
     private bool loaded;
+
+    [ObservableProperty]
+    private string version;
+
+    //https://stackoverflow.com/a/28635481
+    public static string GetAppVersion()
+    {
+        var package = Package.Current;
+        var packageId = package.Id;
+        var version = packageId.Version;
+
+        return string.Format("{0}.{1}.{2}.{3}", version.Major, version.Minor, version.Build, version.Revision);
+    }
 
     /// <summary>
     /// Load everything expensive and unlock the app afterwards
