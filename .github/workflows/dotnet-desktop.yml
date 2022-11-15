@@ -81,15 +81,23 @@ jobs:
         Configuration: ${{ matrix.configuration }}
 
     # Decode the base 64 encoded pfx and save the Signing_Certificate
-    - name: Decode the pfx
-      run: |
-        $pfx_cert_byte = [System.Convert]::FromBase64String("${{ secrets.Base64_Encoded_Pfx }}")
-        $certificatePath = Join-Path -Path $env:Wap_Project_Directory -ChildPath GitHubActionsWorkflow.pfx
-        [IO.File]::WriteAllBytes("$certificatePath", $pfx_cert_byte)
+    #- name: Decode the pfx
+    #  run: |
+    #    $pfx_cert_byte = [System.Convert]::FromBase64String("${{ secrets.Base64_Encoded_Pfx }}")
+    #    $certificatePath = Join-Path -Path $env:Wap_Project_Directory -ChildPath GitHubActionsWorkflow.pfx
+    #    [IO.File]::WriteAllBytes("$certificatePath", $pfx_cert_byte)
 
     # Create the app package by building and packaging the Windows Application Packaging project
     - name: Create the app package
-      run: msbuild $env:WapProjectPath /p:Configuration=$env:Configuration /p:Platform=$env:Platform /p:AppxBundlePlatforms=$env:Appx_Bundle_Platforms /p:UapAppxPackageBuildMode=$env:Appx_Package_Build_Mode /p:AppxBundle=$env:Appx_Bundle /p:PackageCertificateKeyFile=GitHubActionsWorkflow.pfx /p:PackageCertificatePassword="${{ secrets.Pfx_Key }}"
+      run: |
+        msbuild $env:WapProjectPath 
+        /p:Configuration=$env:Configuration 
+        /p:Platform=$env:Platform 
+        /p:AppxBundlePlatforms=$env:Appx_Bundle_Platforms 
+        /p:UapAppxPackageBuildMode=$env:Appx_Package_Build_Mode 
+        /p:AppxBundle=$env:Appx_Bundle 
+#        /p:PackageCertificateKeyFile=GitHubActionsWorkflow.pfx 
+#        /p:PackageCertificatePassword="${{ secrets.Pfx_Key }}"
       env:
         Appx_Bundle: Always
         Appx_Bundle_Platforms: x64
@@ -99,12 +107,12 @@ jobs:
         WapProjectPath: ${{ env.Wap_Project_Path }}
 
     # Remove the pfx
-    - name: Remove the pfx
-      run: Remove-Item -path $env:Wap_Project_Directory\GitHubActionsWorkflow.pfx
+    #- name: Remove the pfx
+    #  run: Remove-Item -path $env:Wap_Project_Directory\GitHubActionsWorkflow.pfx
 
     # Upload the MSIX package: https://github.com/marketplace/actions/upload-a-build-artifact
     - name: Upload build artifacts
       uses: actions/upload-artifact@v3
       with:
         name: MSIX Package
-        path: ${{ env.Wap_Project_Directory }}\AppPackages
+        path: ${{ env.Wap_Project_Directory }}\AppPackages\*.msixbundle
