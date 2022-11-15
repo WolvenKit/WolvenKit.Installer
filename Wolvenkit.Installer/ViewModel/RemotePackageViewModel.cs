@@ -6,7 +6,6 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.Extensions.DependencyInjection;
 using Wolvenkit.Installer.Models;
-using Wolvenkit.Installer.Pages;
 using Wolvenkit.Installer.Services;
 
 namespace Wolvenkit.Installer.ViewModel;
@@ -85,7 +84,8 @@ public partial class RemotePackageViewModel
         }
     }
 
-    private bool CanInstall() => !Directory.Exists(InstallPath) || (Directory.Exists(InstallPath) && !Directory.GetFiles(InstallPath).Any());
+    // Can only install into an empty folder
+    private bool CanInstall() => !Directory.Exists(InstallPath) || (Directory.Exists(InstallPath) && !Directory.GetFiles(InstallPath).Any() && !Directory.GetDirectories(InstallPath).Any());
 
     public RemotePackageModel GetModel() => _model;
 }

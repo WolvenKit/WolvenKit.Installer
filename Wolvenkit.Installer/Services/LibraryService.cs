@@ -402,7 +402,7 @@ public class LibraryService : ILibraryService
         InstalledPackages.Add(new(installedPackage, EPackageStatus.Installed, package.ImagePath));
 
         // add start menu shortcut
-        AddShortcut(installedPackage, package);
+        // AddShortcut(installedPackage, package);
 
         // save
         await SaveAsync();

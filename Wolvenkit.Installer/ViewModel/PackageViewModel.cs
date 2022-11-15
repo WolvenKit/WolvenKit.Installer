@@ -1,9 +1,11 @@
-﻿using System.Diagnostics;
+﻿using System;
+using System.Diagnostics;
 using System.IO;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.UI.Xaml.Controls;
 using Wolvenkit.Installer.Models;
 using Wolvenkit.Installer.Services;
 
@@ -112,14 +114,43 @@ public partial class PackageViewModel
 
         if (Directory.Exists(_model.Path))
         {
-            try
+            // managed packages need confirmation
+            if (_model.Files is null || _model.Files.Length == 0)
             {
-                Directory.Delete(_model.Path, true);
-                await _libraryService.RemoveAsync(_model);
+                var noWifiDialog = new ContentDialog()
+                {
+                    XamlRoot = App.MainRoot.XamlRoot,
+                    Title = "Remove",
+                    Content = $"Are you sure you want to delete this folder? Path: {_model.Path}",
+                    PrimaryButtonText = "Yes",
+                    CloseButtonText = "Cancel"
+                };
+
+                var r = await noWifiDialog.ShowAsync();
+                if (r == ContentDialogResult.Primary)
+                {
+                    try
+                    {
+                        Directory.Delete(_model.Path, true);
+                        await _libraryService.RemoveAsync(_model);
+                    }
+                    catch (System.Exception)
+                    {
+                        // todo logging
+                    }
+                }
             }
-            catch (System.Exception)
+            else
             {
-                // todo logging
+                try
+                {
+                    Directory.Delete(_model.Path, true);
+                    await _libraryService.RemoveAsync(_model);
+                }
+                catch (System.Exception)
+                {
+                    // todo logging
+                }
             }
         }
 
@@ -141,6 +172,12 @@ public partial class PackageViewModel
             try
             {
                 Directory.Delete(_model.Path, true);
+                //foreach (var f in _model.Files)
+                //{
+                //    File.Delete(f);
+                //}
+
+
                 isuninstalled = await _libraryService.RemoveAsync(_model);
             }
             catch (System.Exception)
