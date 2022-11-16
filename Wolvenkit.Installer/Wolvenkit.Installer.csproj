@@ -30,7 +30,7 @@
 	  <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="7.0.0" />
 	  <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="7.0.0" />
 	  <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="7.0.0" />
-	  <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.2.220902.1-preview1" />
+	  <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.2.221109.1" />
     <PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.22621.755" />
     <PackageReference Include="Octokit" Version="4.0.1" />
     <PackageReference Include="Semver" Version="2.2.0" />
