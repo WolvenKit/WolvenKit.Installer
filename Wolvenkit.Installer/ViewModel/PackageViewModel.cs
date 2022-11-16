@@ -105,19 +105,37 @@ public partial class PackageViewModel
         }
     }
 
-    [RelayCommand()]
-    private async Task Uninstall()
+    private bool IsProcessRunning()
     {
-        _notificationService.StartIndeterminate();
-        _notificationService.DisplayBanner("Uninstalling", $"Uninstalling {Name}. Please wait", Microsoft.UI.Xaml.Controls.InfoBarSeverity.Informational);
+        var pname = Process.GetProcessesByName("WolvenKit");
+        return pname is not null && pname.Length != 0;
+    }
 
+    private async Task<bool> UninstallModal()
+    {
+        var isuninstalled = false;
+
+        if (IsProcessRunning())
+        {
+            var dlg = new ContentDialog()
+            {
+                XamlRoot = App.MainRoot.XamlRoot,
+                Title = "Process running",
+                Content = $"Please close WolvenKit before continuing",
+                PrimaryButtonText = "Ok"
+            };
+
+            var r = await dlg.ShowAsync();
+
+            return false;
+        }
 
         if (Directory.Exists(_model.Path))
         {
             // managed packages need confirmation
             if (_model.Files is null || _model.Files.Length == 0)
             {
-                var noWifiDialog = new ContentDialog()
+                var dlg = new ContentDialog()
                 {
                     XamlRoot = App.MainRoot.XamlRoot,
                     Title = "Remove",
@@ -126,17 +144,17 @@ public partial class PackageViewModel
                     CloseButtonText = "Cancel"
                 };
 
-                var r = await noWifiDialog.ShowAsync();
+                var r = await dlg.ShowAsync();
                 if (r == ContentDialogResult.Primary)
                 {
                     try
                     {
                         Directory.Delete(_model.Path, true);
-                        await _libraryService.RemoveAsync(_model);
+                        isuninstalled = await _libraryService.RemoveAsync(_model);
                     }
-                    catch (System.Exception)
+                    catch (System.Exception e)
                     {
-                        // todo logging
+                        _notificationService.DisplayError(e.Message);
                     }
                 }
             }
@@ -145,56 +163,63 @@ public partial class PackageViewModel
                 try
                 {
                     Directory.Delete(_model.Path, true);
-                    await _libraryService.RemoveAsync(_model);
+                    isuninstalled = await _libraryService.RemoveAsync(_model);
                 }
-                catch (System.Exception)
+                catch (System.Exception e)
                 {
-                    // todo logging
+                    _notificationService.DisplayError(e.Message);
                 }
             }
         }
 
-        _notificationService.CloseBanner();
+        return isuninstalled;
+    }
+
+    [RelayCommand()]
+    private async Task Uninstall()
+    {
+        _notificationService.StartIndeterminate();
+        _notificationService.DisplayBanner("Uninstalling", $"Uninstalling {Name}. Please wait", Microsoft.UI.Xaml.Controls.InfoBarSeverity.Informational);
+
+        if (await UninstallModal())
+        {
+            _notificationService.CloseBanner();
+        }
+
         _notificationService.StopIndeterminate();
     }
 
     [RelayCommand()]
     private async Task Update()
     {
+        if (IsProcessRunning())
+        {
+            var dlg = new ContentDialog()
+            {
+                XamlRoot = App.MainRoot.XamlRoot,
+                Title = "Process running",
+                Content = $"Please close WolvenKit before continuing",
+                PrimaryButtonText = "Ok"
+            };
+
+            var r = await dlg.ShowAsync();
+
+            return;
+        }
+
         _notificationService.StartIndeterminate();
         _notificationService.DisplayBanner("Updating", $"Updating {Name}. Please wait", Microsoft.UI.Xaml.Controls.InfoBarSeverity.Informational);
 
-        var isuninstalled = false;
-
-        // remove
-        if (Directory.Exists(_model.Path))
-        {
-            try
-            {
-                Directory.Delete(_model.Path, true);
-                //foreach (var f in _model.Files)
-                //{
-                //    File.Delete(f);
-                //}
-
-
-                isuninstalled = await _libraryService.RemoveAsync(_model);
-            }
-            catch (System.Exception)
-            {
-                // todo logging
-            }
-        }
-
         // install
-        if (isuninstalled)
+        if (await UninstallModal())
         {
-            await _libraryService.InstallAsync(_model);
+            await _libraryService.InstallAsync(_model, _model.Path);
             IsUpdateAvailable = false;
             //.Height = s_expandedHeight;
+
+            _notificationService.CloseBanner();
         }
 
-        _notificationService.CloseBanner();
         _notificationService.StopIndeterminate();
     }
 }

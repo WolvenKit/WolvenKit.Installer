@@ -28,7 +28,7 @@ public interface ILibraryService
 
     Task<string> GetLatestVersionAsync(RemotePackageModel model, bool prerelease);
     Task<bool> InstallAsync(RemotePackageModel id, string installPath);
-    Task<bool> InstallAsync(PackageModel id);
+    Task<bool> InstallAsync(PackageModel id, string installPath);
     Task InitAsync();
     Task SaveAsync();
     Task<bool> RemoveAsync(PackageModel model);
@@ -294,7 +294,8 @@ public class LibraryService : ILibraryService
         }
     }
 
-    public async Task<bool> InstallAsync(PackageModel package) => TryGetRemote(package.Name, out var remote) && await InstallAsync(remote.GetModel(), remote.InstallPath);
+    public async Task<bool> InstallAsync(PackageModel package, string installPath)
+        => TryGetRemote(package.Name, out var remote) && await InstallAsync(remote.GetModel(), installPath);
 
     public async Task<bool> InstallAsync(RemotePackageModel package, string installPath)
     {

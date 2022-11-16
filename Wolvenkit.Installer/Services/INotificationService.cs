@@ -9,6 +9,7 @@ public interface INotificationService
 
     void CloseBanner();
     void DisplayBanner(string title, string message, InfoBarSeverity severity);
+    void DisplayError(string message);
 
 
     void StartIndeterminate();
@@ -48,6 +49,15 @@ public partial class NotificationService : INotificationService
         BannerNotification.Message = message;
         BannerNotification.Severity = severity;
         BannerNotification.Title = title;
+    }
+
+    public void DisplayError(string message)
+    {
+        BannerNotification.IsOpen = true;
+
+        BannerNotification.Message = message;
+        BannerNotification.Severity = InfoBarSeverity.Error;
+        BannerNotification.Title = "Error";
     }
 
     public void CloseBanner() => BannerNotification.IsOpen = false;

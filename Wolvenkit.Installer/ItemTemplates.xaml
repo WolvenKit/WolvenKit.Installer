@@ -68,7 +68,6 @@
                 <RelativePanel
                     Grid.Row="1"
                     Grid.Column="1"
-                    Grid.ColumnSpan="2"
                     Margin="16,6,0,0">
 
                     <TextBlock
@@ -205,7 +204,7 @@
                                             VerticalAlignment="Center"
                                             Style="{ThemeResource BaseTextBlockStyle}"
                                             Text="Location: " />-->
-                                        <TextBox Text="{x:Bind InstallPath, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                                        <TextBox Text="{x:Bind InstallPath, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" TextWrapping="Wrap" />
                                         <Button Margin="5,0,0,0" Command="{x:Bind PickFolderCommand}">
                                             <SymbolIcon Symbol="Folder" />
                                         </Button>
