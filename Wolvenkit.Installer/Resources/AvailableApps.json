@@ -3,7 +3,7 @@
     "Url": "https://github.com/WolvenKit/WolvenKit",
     "Name": "WolvenKit",
     "AssetPattern": "WolvenKit-.*.zip",
-    "Executable": "WolvenKit Desktop/WolvenKit.exe",
+    "Executable": "WolvenKit.exe",
     "Description": "Cyberpunk 2077 mod editor and creator",
     "Category": "Application",
     "ImagePath": "ms-appx:///Assets/ControlImages/Acrylic.png"
