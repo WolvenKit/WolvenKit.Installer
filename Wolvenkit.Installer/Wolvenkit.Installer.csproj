@@ -8,7 +8,15 @@
     <Platforms>x64</Platforms>
     <RuntimeIdentifiers>win10-x64</RuntimeIdentifiers>
     <UseWinUI>true</UseWinUI>
+	<SatelliteResourceLanguages>en</SatelliteResourceLanguages>
   </PropertyGroup>
+
+  <!-- Self-contained -->
+  <PropertyGroup>
+	<WindowsAppSDKSelfContained>true</WindowsAppSDKSelfContained>
+	<EnablePreviewMsixTooling>true</EnablePreviewMsixTooling>
+  </PropertyGroup>
+  
   <ItemGroup>
     <None Remove="ItemTemplates.xaml" />
     <None Remove="Pages\AvailablePage.xaml" />
@@ -30,9 +38,9 @@
 	  <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="7.0.0" />
 	  <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="7.0.0" />
 	  <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="7.0.0" />
-	  <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.2.221116.1" />
+	  <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.2.221209.1" />
     <PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.22621.755" />
-    <PackageReference Include="Octokit" Version="4.0.3" />
+    <PackageReference Include="Octokit" Version="4.0.4" />
     <PackageReference Include="Semver" Version="2.2.0" />
     <Manifest Include="$(ApplicationManifest)" />
   </ItemGroup>

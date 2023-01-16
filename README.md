@@ -25,3 +25,13 @@ winget install WolvenKit.Installer
 ## Screenshots
 
 ![wolvenkit installer_01](https://user-images.githubusercontent.com/37657287/212540284-50a43778-8adf-4e26-92bd-397ca8380e6c.png)
+
+
+## Building
+
+### Self-contained
+To publish as self-contained use:
+`dotnet publish .\Wolvenkit.Installer\Wolvenkit.Installer.csproj -o publish -c Release --self-contained true -r win10-x64 -p:Platform=x64` (https://github.com/microsoft/WindowsAppSDK/discussions/3026)
+
+and add 
+`<EnablePreviewMsixTooling>true</EnablePreviewMsixTooling>` in the projects (https://github.com/dotnet/maui/issues/5886)
