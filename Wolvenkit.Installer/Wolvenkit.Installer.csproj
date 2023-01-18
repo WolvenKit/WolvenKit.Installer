@@ -68,6 +68,18 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Content Update="Assets\ControlImages\Acrylic.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Update="Assets\MainPage_Banner.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Update="Assets\Sammy_Grayscale.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
     <Page Update="ItemTemplates.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
