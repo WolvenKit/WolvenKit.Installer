@@ -28,3 +28,15 @@ To publish as self-contained use:
 
 and add 
 `<EnablePreviewMsixTooling>true</EnablePreviewMsixTooling>` in the projects (https://github.com/dotnet/maui/issues/5886)
+
+## Updating
+
+This app is hosted here on this repo with github-pages. If the end-user installs the app via the .appinstaller file, the app can receive automatic updates polling this repos gh-pages url.
+
+To release a new version, the following files need to be updated here: 
+- `\docs\Wolvenkit.Installer.Package.appinstaller`
+- `E:\GitHub\WolvenKit.Installer\docs\Wolvenkit.Installer.Package_0.2.3.0_Test\Wolvenkit.Installer.Package_0.2.3.0_x64.msixbundle`
+- Dependencies (only x64)
+
+Since the apppackage needs to be signed, unfortunately, this needs to be done manually.
+
