@@ -3,29 +3,22 @@ A simple and standalone app for managing (installing, updating, removing) differ
 
 ## Installation
 
-### Winget
+> Installer-link: https://wolvenkit.github.io/WolvenKit.Installer/Wolvenkit.Installer.Package.appinstaller
 
-> :warning: This feature is currently unavailable
-
-The WolvenKit.Installer app is also available on the [Windows Package Manager ](https://learn.microsoft.com/en-us/windows/package-manager/winget/#use-winget). Open terminal or command prompt and type in:
-
-```cmd
-winget install WolvenKit.Installer
-```
-
-### Manually
+Or download from the release below:
 
 | Name | Latest Release  |
 | ------- | ------------ |
 | [WolvenKit.Installer](https://github.com/WolvenKit/WolvenKit.Installer/releases/latest/) | [![GitHub release (latest by date)](https://img.shields.io/github/v/release/WolvenKit/WolvenKit.Installer)](https://github.com/WolvenKit/WolvenKit.Installer/releases/latest) | 
 
-- Download the latest `Wolvenkit.Installer.Package_x.x.x.x_x64.msixbundle` from GitHub above
+- Download the file `Wolvenkit.Installer.Package.appinstaller` from GitHub above
 - And double-cick the file to run the installer.
 
 ## Screenshots
 
-![wolvenkit installer_01](https://user-images.githubusercontent.com/37657287/212540284-50a43778-8adf-4e26-92bd-397ca8380e6c.png)
+![Screenshot 2023-01-18 175119](https://user-images.githubusercontent.com/37657287/213275734-c8a4c0af-d0c0-4301-a635-261b3b6c7366.png)
 
+![wolvenkit installer_01](https://user-images.githubusercontent.com/37657287/212540284-50a43778-8adf-4e26-92bd-397ca8380e6c.png)
 
 ## Building
 
