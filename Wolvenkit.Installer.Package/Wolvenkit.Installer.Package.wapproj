@@ -41,7 +41,7 @@
     <HoursBetweenUpdateChecks>0</HoursBetweenUpdateChecks>
     <PackageCertificateThumbprint>F3B6F39B7D06A96E2752172122D4B0DD245F5504</PackageCertificateThumbprint>
     <AppxPackageSigningTimestampDigestAlgorithm>SHA256</AppxPackageSigningTimestampDigestAlgorithm>
-    <AppInstallerUri>https://github.com/WolvenKit/WolvenKit.Installer/blob/main/docs</AppInstallerUri>
+    <AppInstallerUri>https://wolvenkit.github.io/WolvenKit.Installer</AppInstallerUri>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <AppxBundle>Always</AppxBundle>
