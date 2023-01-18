@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.UI.Xaml.Controls;
+using Wolvenkit.Installer.Helper;
 using Wolvenkit.Installer.Models;
 using Wolvenkit.Installer.Services;
 
@@ -113,8 +115,6 @@ public partial class PackageViewModel
 
     private async Task<bool> UninstallModal()
     {
-        var isuninstalled = false;
-
         if (IsProcessRunning())
         {
             var dlg = new ContentDialog()
@@ -133,7 +133,8 @@ public partial class PackageViewModel
         if (Directory.Exists(_model.Path))
         {
             // managed packages need confirmation
-            if (_model.Files is null || _model.Files.Length == 0)
+            //if (_model.Files is null || _model.Files.Length == 0)
+            if (SettingsHelper.GetUseZipInstallers())
             {
                 var dlg = new ContentDialog()
                 {
@@ -147,32 +148,41 @@ public partial class PackageViewModel
                 var r = await dlg.ShowAsync();
                 if (r == ContentDialogResult.Primary)
                 {
+
                     try
                     {
+
                         Directory.Delete(_model.Path, true);
-                        isuninstalled = await _libraryService.RemoveAsync(_model);
+                        return await _libraryService.RemoveAsync(_model);
                     }
-                    catch (System.Exception e)
+                    catch (Exception)
                     {
-                        _notificationService.DisplayError(e.Message);
+                        _notificationService.DisplayError($"Could not uninstall {_model.Name}. Delete {_model.Path} manually.");
+                        return false;
                     }
                 }
             }
             else
             {
-                try
+                // find uninstaller
+                var unInstaller = Directory.GetFiles(_model.Path, "unins000.exe").FirstOrDefault();
+                if (unInstaller is not null && File.Exists(unInstaller))
                 {
-                    Directory.Delete(_model.Path, true);
-                    isuninstalled = await _libraryService.RemoveAsync(_model);
+                    using var p = new Process();
+                    p.StartInfo.FileName = unInstaller;
+                    p.Start();
+                    p.WaitForExit();
+                    return await _libraryService.RemoveAsync(_model);
                 }
-                catch (System.Exception e)
+                else
                 {
-                    _notificationService.DisplayError(e.Message);
+                    _notificationService.DisplayError($"Could not uninstall {_model.Name}. Delete {_model.Path} manually.");
+                    return false;
                 }
             }
         }
 
-        return isuninstalled;
+        return false;
     }
 
     [RelayCommand()]

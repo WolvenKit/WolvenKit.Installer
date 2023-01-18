@@ -14,26 +14,12 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Semver;
+using Wolvenkit.Installer.Helper;
 using Wolvenkit.Installer.Models;
 using Wolvenkit.Installer.Pages;
 using Wolvenkit.Installer.ViewModel;
 
 namespace Wolvenkit.Installer.Services;
-
-public interface ILibraryService
-{
-    ObservableCollection<PackageViewModel> InstalledPackages { get; }
-
-    ObservableCollection<RemotePackageViewModel> RemotePackages { get; set; }
-
-    Task<string> GetLatestVersionAsync(RemotePackageModel model, bool prerelease);
-    Task<bool> InstallAsync(RemotePackageModel id, string installPath);
-    Task<bool> InstallAsync(PackageModel id, string installPath);
-    Task InitAsync();
-    Task SaveAsync();
-    Task<bool> RemoveAsync(PackageModel model);
-    bool TryGetRemote(PackageModel model, out RemotePackageViewModel remote);
-}
 
 public class LibraryService : ILibraryService
 {
@@ -208,7 +194,6 @@ public class LibraryService : ILibraryService
                 var installedPackage = new PackageModel(
                     App.TargetAppSettings.TargetId,
                     App.TargetAppSettings.TargetVersion,
-                    null,
                     App.TargetAppSettings.TargetLocation.FullName);
 
                 // check for updates
@@ -294,14 +279,13 @@ public class LibraryService : ILibraryService
         }
     }
 
-    public async Task<bool> InstallAsync(PackageModel package, string installPath)
-        => TryGetRemote(package.Name, out var remote) && await InstallAsync(remote.GetModel(), installPath);
+    public async Task<bool> InstallAsync(PackageModel package, string installPath) => TryGetRemote(package.Name, out var remote) && await InstallAsync(remote.GetModel(), installPath);
 
     public async Task<bool> InstallAsync(RemotePackageModel package, string installPath)
     {
         if (string.IsNullOrEmpty(installPath))
         {
-            _logger.LogError("Install location does not exist: {installpath}", installPath);
+            _logger.LogError("Install location does not exist: {installPath}", installPath);
             return false;
         }
 
@@ -317,11 +301,10 @@ public class LibraryService : ILibraryService
         }
 
         // check if versioned file is installed
-        var fileName = package.AssetPattern.Replace(@".*", version);
-        var testZipPath = Path.Combine(Path.GetTempPath(), fileName);
-        var zipPath = testZipPath;
+        var testInstallerPath = Path.Combine(Path.GetTempPath(), package.AssetPattern.Replace(@".*", version));
+        var installerPath = testInstallerPath;
 
-        if (!File.Exists(testZipPath))
+        if (!File.Exists(testInstallerPath))
         {
             // query github api
             var header = $"wolvenkit";
@@ -360,14 +343,14 @@ public class LibraryService : ILibraryService
 
             // download 
             var contentUrl = asset.First().BrowserDownloadUrl;
-            zipPath = Path.Combine(Path.GetTempPath(), contentUrl.Split('/').Last());
+            installerPath = Path.Combine(Path.GetTempPath(), contentUrl.Split('/').Last());
 
             // TODO
             var remoteHash = "";
             string localHash = null;
-            if (File.Exists(zipPath))
+            if (File.Exists(installerPath))
             {
-                localHash = CalculateFileHash(zipPath);
+                localHash = CalculateFileHash(installerPath);
             }
 
             if (localHash != remoteHash)
@@ -383,78 +366,59 @@ public class LibraryService : ILibraryService
                     return false;
                 }
 
-                await using var fs = new FileStream(zipPath, System.IO.FileMode.Create);
+                await using var fs = new FileStream(installerPath, System.IO.FileMode.Create);
                 // TODO report progress here
                 await response.Content.CopyToAsync(fs);
             }
         }
 
-
-        // extract zip file
+        // install
         _notificationService.DisplayBanner("Installing", $"Installing {package.Name}. Please wait ...", Microsoft.UI.Xaml.Controls.InfoBarSeverity.Informational);
-        var installedFiles = await Task.Run(() => ExtractZip(zipPath, installPath));
 
-        var installedPackage = new PackageModel(
+        if (SettingsHelper.GetUseZipInstallers())
+        {
+            var installedFiles = await Task.Run(() => ExtractZip(installerPath, installPath));
+
+            var installedPackage = new PackageModel(
             package.Name,
             version,
-            installedFiles.Select(x => Path.GetRelativePath(installPath, x)).ToArray(),
             installPath);
 
-        InstalledPackages.Add(new(installedPackage, EPackageStatus.Installed, package.ImagePath));
+            InstalledPackages.Add(new(installedPackage, EPackageStatus.Installed, package.ImagePath));
 
-        // add start menu shortcut
-        // AddShortcut(installedPackage, package);
+        }
+        else
+        {
+            // run installer
+            try
+            {
+                using var p = new Process();
+                p.StartInfo.FileName = installerPath;
+                p.StartInfo.Arguments = $"/SILENT /DIR=\"{installPath}\"";
+                p.Start();
+                p.WaitForExit();
+
+                var installedPackage = new PackageModel(
+                   package.Name,
+                   version,
+                   installPath);
+
+                InstalledPackages.Add(new(installedPackage, EPackageStatus.Installed, package.ImagePath));
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error installing Wolvenkit.Installer.Package");
+            }
+
+
+
+            _ = App.StartupWindow.DispatcherQueue.TryEnqueue(_notificationService.Completed);
+        }
 
         // save
         await SaveAsync();
 
         return true;
-    }
-
-    private void AddShortcut(PackageModel installedPackage, RemotePackageModel remote)
-    {
-        var pathToExe = Path.Combine(installedPackage.Path, remote.Executable);
-        //var commonStartMenuPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonStartMenu), "Programs");
-        var commonStartMenuPath = "E:\\_out";
-        //var description = remote.Description;
-        //var iconPath = "";
-        var linkName = $"{installedPackage.Name}.lnk";
-        //var shortcutLocation = Path.Combine(commonStartMenuPath, linkName);
-
-        //var startInfo = new ProcessStartInfo()
-        //{
-        //    FileName = "powershell.exe",
-        //    Arguments = $"New-Item -ItemType SymbolicLink -Path \"{commonStartMenuPath}\" -Name \"{linkName}\" -Value \"{pathToExe}\"",
-        //    UseShellExecute = true,
-        //    Verb = "runas"
-        //};
-        //Process.Start(startInfo);
-
-        using var p = new Process();
-        //p.StartInfo.FileName = "CMD.EXE";
-        p.StartInfo.FileName = "powershell.exe";
-        //p.StartInfo.Arguments = $"/K powershell.exe New-Item -ItemType SymbolicLink -Path \"{commonStartMenuPath}\" -Name \"{linkName}\" -Value \"{pathToExe}\"";
-        p.StartInfo.Arguments = $"New-Item -ItemType SymbolicLink -Path \"{commonStartMenuPath}\" -Name \"{linkName}\" -Value \"{pathToExe}\"";
-        p.StartInfo.UseShellExecute = true;
-        p.StartInfo.Verb = "runas";
-        //p.StartInfo.RedirectStandardOutput = true;
-        p.Start();
-
-        //Console.WriteLine(p.StandardOutput.ReadToEnd());
-
-        //p.WaitForExit();
-
-        //try
-        //{
-
-        //    DK.WshRuntime.WshInterop.CreateShortcut(shortcutLocation, description, pathToExe, "", iconPath);
-        //}
-        //catch (Exception e)
-        //{
-        //    _logger.LogWarning("Exception: {msg}", e.Message);
-        //}
-
-
     }
 
     /// <summary>
@@ -464,23 +428,21 @@ public class LibraryService : ILibraryService
     /// <returns></returns>
     private string CalculateFileHash(string filePath)
     {
-        using (var mySHA256 = SHA256.Create())
+        using var mySHA256 = SHA256.Create();
+        var fInfo = new FileInfo(filePath);
+        using var fileStream = fInfo.Open(FileMode.Open);
+        try
         {
-            var fInfo = new FileInfo(filePath);
-            using var fileStream = fInfo.Open(FileMode.Open);
-            try
-            {
-                fileStream.Position = 0;
-                return string.Concat(mySHA256.ComputeHash(fileStream).Select(b => b.ToString("X2")));
-            }
-            catch (IOException e)
-            {
-                _logger.LogWarning("I/O Exception: {msg}", e.Message);
-            }
-            catch (UnauthorizedAccessException e)
-            {
-                _logger.LogWarning("Access Exception: {msg}", e.Message);
-            }
+            fileStream.Position = 0;
+            return string.Concat(mySHA256.ComputeHash(fileStream).Select(b => b.ToString("X2")));
+        }
+        catch (IOException e)
+        {
+            _logger.LogWarning("I/O Exception: {msg}", e.Message);
+        }
+        catch (UnauthorizedAccessException e)
+        {
+            _logger.LogWarning("Access Exception: {msg}", e.Message);
         }
 
         return null;
@@ -556,7 +518,7 @@ public class LibraryService : ILibraryService
             files.Clear();
         }
 
-        _ = App.StartupWindow.DispatcherQueue.TryEnqueue(() => _notificationService.Completed());
+        _ = App.StartupWindow.DispatcherQueue.TryEnqueue(_notificationService.Completed);
         return files;
     }
 

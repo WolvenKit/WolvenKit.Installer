@@ -20,6 +20,7 @@
             UseSystemFocusVisuals="False"
             VerticalScrollBarVisibility="Auto"
             VerticalScrollMode="Auto">
+
             <StackPanel HorizontalAlignment="Left">
                 <TextBlock
                     Margin="0,12,0,0"
@@ -29,7 +30,6 @@
                     <RadioButton
                         Checked="OnThemeRadioButtonChecked"
                         Content="Light"
-                        KeyDown="OnThemeRadioButtonKeyDown"
                         Tag="Light" />
                     <RadioButton
                         Checked="OnThemeRadioButtonChecked"
@@ -40,7 +40,22 @@
                         Content="Use system setting"
                         Tag="Default" />
                 </StackPanel>
+
+                <TextBlock
+                    Margin="0,40,0,0"
+                    Style="{StaticResource SubtitleTextBlockStyle}"
+                    Text="Installer" />
+                <StackPanel Margin="0,10,0,0">
+                    <ToggleSwitch
+                        x:Name="installerToggle"
+                        Margin="0,0,0,4"
+                        Header="Extract apps as zip instead of using the built-in installer"
+                        OffContent="No"
+                        OnContent="Yes"
+                        Toggled="installerToggle_Toggled" />
+                </StackPanel>
             </StackPanel>
+
         </ScrollViewer>
     </Grid>
 </Page>

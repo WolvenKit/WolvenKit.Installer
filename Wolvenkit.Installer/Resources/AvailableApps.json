@@ -2,7 +2,7 @@
   {
     "Url": "https://github.com/WolvenKit/WolvenKit",
     "Name": "WolvenKit",
-    "AssetPattern": "WolvenKit-.*.zip",
+    "AssetPattern": "WolvenKitSetup-.*.exe",
     "Executable": "WolvenKit.exe",
     "Description": "Cyberpunk 2077 mod editor and creator",
     "Category": "Application",
@@ -11,7 +11,7 @@
   {
     "Url": "https://github.com/WolvenKit/WolvenKit-nightly-releases",
     "Name": "WolvenKit Nightly",
-    "AssetPattern": "WolvenKit-.*.zip",
+    "AssetPattern": " WolvenKit.NightlySetup-.*.exe",
     "Executable": "WolvenKit.exe",
     "Description": "Wolvenkit Beta",
     "Category": "Application",
