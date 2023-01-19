@@ -16,6 +16,12 @@
 	<WindowsAppSDKSelfContained>true</WindowsAppSDKSelfContained>
 	<EnablePreviewMsixTooling>true</EnablePreviewMsixTooling>
   </PropertyGroup>
+  <ItemGroup>
+    <Compile Remove="publish\**" />
+    <EmbeddedResource Remove="publish\**" />
+    <None Remove="publish\**" />
+    <Page Remove="publish\**" />
+  </ItemGroup>
   
   <ItemGroup>
     <None Remove="ItemTemplates.xaml" />
@@ -83,5 +89,9 @@
     <Page Update="ItemTemplates.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PRIResource Remove="publish\**" />
   </ItemGroup>
 </Project>

@@ -134,35 +134,7 @@ public partial class PackageViewModel
         {
             // managed packages need confirmation
             //if (_model.Files is null || _model.Files.Length == 0)
-            if (SettingsHelper.GetUseZipInstallers())
-            {
-                var dlg = new ContentDialog()
-                {
-                    XamlRoot = App.MainRoot.XamlRoot,
-                    Title = "Remove",
-                    Content = $"Are you sure you want to delete this folder? Path: {_model.Path}",
-                    PrimaryButtonText = "Yes",
-                    CloseButtonText = "Cancel"
-                };
-
-                var r = await dlg.ShowAsync();
-                if (r == ContentDialogResult.Primary)
-                {
-
-                    try
-                    {
-
-                        Directory.Delete(_model.Path, true);
-                        return await _libraryService.RemoveAsync(_model);
-                    }
-                    catch (Exception)
-                    {
-                        _notificationService.DisplayError($"Could not uninstall {_model.Name}. Delete {_model.Path} manually.");
-                        return false;
-                    }
-                }
-            }
-            else
+            if (!SettingsHelper.GetUseZipInstallers())
             {
                 // find uninstaller
                 var unInstaller = Directory.GetFiles(_model.Path, "unins000.exe").FirstOrDefault();
@@ -172,9 +144,20 @@ public partial class PackageViewModel
                     p.StartInfo.FileName = unInstaller;
                     p.Start();
                     p.WaitForExit();
-                    return await _libraryService.RemoveAsync(_model);
                 }
                 else
+                {
+                    // try deleting manually
+                    if (!await RemoveFolder())
+                    {
+                        _notificationService.DisplayError($"Could not uninstall {_model.Name}. Delete {_model.Path} manually.");
+                        return false;
+                    }
+                }
+            }
+            else
+            {
+                if (!await RemoveFolder())
                 {
                     _notificationService.DisplayError($"Could not uninstall {_model.Name}. Delete {_model.Path} manually.");
                     return false;
@@ -182,6 +165,34 @@ public partial class PackageViewModel
             }
         }
 
+        return await _libraryService.RemoveAsync(_model);
+    }
+
+    private async Task<bool> RemoveFolder()
+    {
+        var dlg = new ContentDialog()
+        {
+            XamlRoot = App.MainRoot.XamlRoot,
+            Title = "Remove",
+            Content = $"Are you sure you want to delete this folder? Path: {_model.Path}",
+            PrimaryButtonText = "Yes",
+            CloseButtonText = "Cancel"
+        };
+
+        var r = await dlg.ShowAsync();
+        if (r == ContentDialogResult.Primary)
+        {
+            try
+            {
+                Directory.Delete(_model.Path, true);
+                return true;
+            }
+            catch (Exception)
+            {
+                _notificationService.DisplayError($"Could not uninstall {_model.Name}. Delete {_model.Path} manually.");
+                return false;
+            }
+        }
         return false;
     }
 
