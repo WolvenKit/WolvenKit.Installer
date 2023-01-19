@@ -2,13 +2,13 @@
 
 namespace Wolvenkit.Installer.Services;
 
-[ObservableObject]
-public partial class Progress
+public partial class Progress : ObservableObject
 {
     [ObservableProperty]
+#pragma warning disable IDE0044 // Add readonly modifier
     private int value;
 
     [ObservableProperty]
     private bool isIndeterminate;
-
+#pragma warning restore IDE0044 // Add readonly modifier
 }

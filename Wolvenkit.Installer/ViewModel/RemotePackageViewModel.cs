@@ -10,8 +10,7 @@ using Wolvenkit.Installer.Services;
 
 namespace Wolvenkit.Installer.ViewModel;
 
-[ObservableObject]
-public partial class RemotePackageViewModel
+public partial class RemotePackageViewModel : ObservableObject
 {
     private readonly ILibraryService _libraryService;
     private readonly INotificationService _notificationService;

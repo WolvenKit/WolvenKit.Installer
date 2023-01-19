@@ -1,17 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using CommunityToolkit.Mvvm.ComponentModel;
-using Microsoft.UI.Xaml.Navigation;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
 using Wolvenkit.Installer.Services;
 
 namespace Wolvenkit.Installer.ViewModel;
 
-[ObservableObject]
-internal partial class InstalledViewModel
+internal partial class InstalledViewModel : ObservableObject
 {
     private readonly IDialogService _dialogService;
     public ILibraryService LibraryService { get; }

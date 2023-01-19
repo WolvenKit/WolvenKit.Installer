@@ -13,8 +13,7 @@ using Wolvenkit.Installer.Services;
 
 namespace Wolvenkit.Installer.ViewModel;
 
-[ObservableObject]
-public partial class PackageViewModel
+public partial class PackageViewModel : ObservableObject
 {
     private readonly PackageModel _model;
     private readonly ILibraryService _libraryService;

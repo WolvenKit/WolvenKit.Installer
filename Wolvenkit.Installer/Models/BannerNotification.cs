@@ -3,9 +3,9 @@ using Microsoft.UI.Xaml.Controls;
 
 namespace Wolvenkit.Installer.Services;
 
-[ObservableObject]
-public partial class BannerNotification
+public partial class BannerNotification : ObservableObject
 {
+#pragma warning disable IDE0044 // Add readonly modifier
     [ObservableProperty]
     private string title;
 

@@ -7,8 +7,7 @@ using Wolvenkit.Installer.Services;
 
 namespace Wolvenkit.Installer.ViewModel;
 
-[ObservableObject]
-public partial class MainViewModel
+public partial class MainViewModel : ObservableObject
 {
     private readonly IDialogService _dialogService;
     private readonly ILibraryService _libraryService;

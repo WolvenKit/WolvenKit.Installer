@@ -3,8 +3,7 @@ using Microsoft.UI.Xaml.Controls;
 
 namespace Wolvenkit.Installer.Services;
 
-[ObservableObject]
-public partial class NotificationService : INotificationService
+public partial class NotificationService : ObservableObject, INotificationService
 {
     public NotificationService()
     {
