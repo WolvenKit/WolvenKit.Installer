@@ -1,9 +1,23 @@
+# vs
 .vs
+
+# publish
 bin
 obj
 publish
 AppPackages
 BundleArtifacts
 
+# user configs
 *.user
 *.pubxml
+
+# upload apppackage ignores
+*.ps1
+*.cer
+*.appxsym
+Add-AppDevPackage.resources
+TelemetryDependencies
+ARM
+ARM64
+x86
