@@ -74,6 +74,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Content Update="Assets\ControlImages\Acrylic-red.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Update="Assets\ControlImages\Acrylic.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

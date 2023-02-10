@@ -4,7 +4,7 @@
     "Name": "WolvenKit",
     "AssetPattern": "WolvenKitSetup-.*.exe",
     "Executable": "WolvenKit.exe",
-    "Description": "Cyberpunk 2077 mod editor and creator",
+    "Description": "WolvenKit for Cyberpunk 2077. Mod editor and mod creator app.",
     "Category": "Application",
     "ImagePath": "ms-appx:///Assets/ControlImages/Acrylic.png"
   },
@@ -16,5 +16,23 @@
     "Description": "Wolvenkit Beta",
     "Category": "Application",
     "ImagePath": "ms-appx:///Assets/ControlImages/Acrylic.png"
+  },
+  {
+    "Url": "https://github.com/WolvenKit/WolvenKit-7",
+    "Name": "WolvenKit (TW3)",
+    "AssetPattern": "WolvenKit-7Setup-.*.exe",
+    "Executable": "WolvenKit.exe",
+    "Description": "WolvenKit for The Witcher 3. Mod editor and mod creator app.",
+    "Category": "Application",
+    "ImagePath": "ms-appx:///Assets/ControlImages/Acrylic-red.png"
+  },
+  {
+    "Url": "https://github.com/WolvenKit/WolvenKit-7-nightly",
+    "Name": "WolvenKit (TW3) Nightly",
+    "AssetPattern": "WolvenKit.TW3.NightlySetup-.*.exe",
+    "Executable": "WolvenKit.exe",
+    "Description": "Wolvenkit (TW3) Beta",
+    "Category": "Application",
+    "ImagePath": "ms-appx:///Assets/ControlImages/Acrylic-red.png"
   }
 ]

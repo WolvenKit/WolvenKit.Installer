@@ -96,7 +96,11 @@ public partial class PackageViewModel : ObservableObject
                 {
                     try
                     {
-                        Process.Start(exe);
+                        var startInfo = new ProcessStartInfo(exe)
+                        {
+                            WorkingDirectory = Path.GetDirectoryName(exe)
+                        };
+                        Process.Start(startInfo);
                     }
                     catch (System.Exception)
                     {
