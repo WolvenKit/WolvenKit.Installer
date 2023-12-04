@@ -29,7 +29,7 @@
   <PropertyGroup>
     <ProjectGuid>be6c095c-daae-42a7-a8d9-23022a7ca784</ProjectGuid>
     <TargetPlatformVersion>10.0.19041.0</TargetPlatformVersion>
-    <TargetPlatformMinVersion>10.0.17763.0</TargetPlatformMinVersion>
+    <TargetPlatformMinVersion>10.0.19041.0</TargetPlatformMinVersion>
     <AssetTargetFallback>net7.0-windows$(TargetPlatformVersion);$(AssetTargetFallback)</AssetTargetFallback>
     <DefaultLanguage>en-US</DefaultLanguage>
     <AppxPackageSigningEnabled>True</AppxPackageSigningEnabled>
@@ -39,7 +39,7 @@
     <GenerateTestArtifacts>True</GenerateTestArtifacts>
     <AppxBundlePlatforms>x64</AppxBundlePlatforms>
     <HoursBetweenUpdateChecks>0</HoursBetweenUpdateChecks>
-    <PackageCertificateThumbprint>F3B6F39B7D06A96E2752172122D4B0DD245F5504</PackageCertificateThumbprint>
+    <PackageCertificateThumbprint>85B8084E4646EB7FB9986176324CB9C472ECBA86</PackageCertificateThumbprint>
     <AppxPackageSigningTimestampDigestAlgorithm>SHA256</AppxPackageSigningTimestampDigestAlgorithm>
     <AppInstallerUri>https://wolvenkit.github.io/WolvenKit.Installer</AppInstallerUri>
   </PropertyGroup>
@@ -106,6 +106,7 @@
     <Content Include="Images\Wide310x150Logo.scale-150.png" />
     <Content Include="Images\Wide310x150Logo.scale-200.png" />
     <Content Include="Images\Wide310x150Logo.scale-400.png" />
+    <None Include="Wolvenkit.Installer.Package_TemporaryKey.pfx" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Wolvenkit.Installer\Wolvenkit.Installer.csproj">
@@ -114,10 +115,10 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.2.221209.1">
+    <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.4.231115000">
       <IncludeAssets>build</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.22621.755">
+    <PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.22621.2428">
       <IncludeAssets>build</IncludeAssets>
     </PackageReference>
   </ItemGroup>
