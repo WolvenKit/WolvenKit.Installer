@@ -39,7 +39,7 @@
     <GenerateTestArtifacts>True</GenerateTestArtifacts>
     <AppxBundlePlatforms>x64</AppxBundlePlatforms>
     <HoursBetweenUpdateChecks>0</HoursBetweenUpdateChecks>
-    <PackageCertificateThumbprint>85B8084E4646EB7FB9986176324CB9C472ECBA86</PackageCertificateThumbprint>
+    <PackageCertificateThumbprint>1FDF198170E073245842293488681AA29957AEB5</PackageCertificateThumbprint>
     <AppxPackageSigningTimestampDigestAlgorithm>SHA256</AppxPackageSigningTimestampDigestAlgorithm>
     <AppInstallerUri>https://wolvenkit.github.io/WolvenKit.Installer</AppInstallerUri>
   </PropertyGroup>
@@ -115,10 +115,10 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.4.231115000">
+    <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.5.240607001">
       <IncludeAssets>build</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.22621.2428">
+    <PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.26100.1">
       <IncludeAssets>build</IncludeAssets>
     </PackageReference>
   </ItemGroup>
